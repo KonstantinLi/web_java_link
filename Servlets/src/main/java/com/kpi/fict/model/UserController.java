@@ -121,7 +121,7 @@ public class UserController {
         }
     }
 
-    private Category findCategory(String categoryType) {
+    public Category findCategory(String categoryType) {
         try (Session session = SESSION_FACTORY.openSession()) {
             Transaction transaction = session.beginTransaction();
 

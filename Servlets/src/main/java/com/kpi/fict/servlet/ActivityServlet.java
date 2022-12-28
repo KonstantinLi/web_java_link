@@ -6,8 +6,6 @@ import com.kpi.fict.model.Category;
 import com.kpi.fict.model.User;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -34,7 +32,7 @@ public class ActivityServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
 
         activities = controller.get(Activity.class);
@@ -77,7 +75,7 @@ public class ActivityServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int activityId = Integer.parseInt(req.getReader().readLine());
 
         try {
@@ -87,5 +85,9 @@ public class ActivityServlet extends HttpServlet {
             LOGGER.error("Confirmation activity id-" + activityId + " was failed.");
             throw new RuntimeException(e);
         }
+    }
+
+    public AdminController getController() {
+        return controller;
     }
 }

@@ -50,8 +50,8 @@ public class AdminController {
 
                 return session.createQuery(query).getResultList();
             } else {
-                System.err.printf("No such entity \"%s\"%n", clazz.getSimpleName());
-                return null;
+                throw new IllegalArgumentException(
+                        String.format("No such entity \"%s\"%n", clazz.getSimpleName()));
             }
         }
     }
@@ -85,7 +85,7 @@ public class AdminController {
         activities.sort(Comparator.comparingInt(Activity::getDuration));
     }
 
-    private List<Activity> filterActivities(List<Activity> activities, FilterType filterType, String value) {
+    public List<Activity> filterActivities(List<Activity> activities, FilterType filterType, String value) {
         Stream<Activity> stream = activities.stream();
 
         return switch (filterType) {
@@ -119,6 +119,51 @@ public class AdminController {
 
         transaction.commit();
         session.close();
+    }
+
+    public void deleteUser(String login) {
+        try (Session session = SESSION_FACTORY.openSession()) {
+            CriteriaQuery<User> criteriaQuery = BUILDER.createQuery(User.class);
+            Root<User> root = criteriaQuery.from(User.class);
+            criteriaQuery.select(root).where(BUILDER.equal(root.get("login"), login));
+
+            Transaction transaction = session.beginTransaction();
+
+            User user = session.createQuery(criteriaQuery).getSingleResult();
+            session.delete(user);
+
+            transaction.commit();
+        }
+    }
+
+    public void deleteCategory(String type) {
+        try (Session session = SESSION_FACTORY.openSession()) {
+            CriteriaQuery<Category> criteriaQuery = BUILDER.createQuery(Category.class);
+            Root<Category> root = criteriaQuery.from(Category.class);
+            criteriaQuery.select(root).where(BUILDER.equal(root.get("type"), type));
+
+            Transaction transaction = session.beginTransaction();
+
+            Category category = session.createQuery(criteriaQuery).getSingleResult();
+            session.delete(category);
+
+            transaction.commit();
+        }
+    }
+
+    public void deleteActivity(int id) {
+        try (Session session = SESSION_FACTORY.openSession()) {
+            CriteriaQuery<Activity> criteriaQuery = BUILDER.createQuery(Activity.class);
+            Root<Activity> root = criteriaQuery.from(Activity.class);
+            criteriaQuery.select(root).where(BUILDER.equal(root.get("id"), id));
+
+            Transaction transaction = session.beginTransaction();
+
+            Activity activity = session.createQuery(criteriaQuery).getSingleResult();
+            session.delete(activity);
+
+            transaction.commit();
+        }
     }
 
     public void confirmActivity(int id) throws Exception {

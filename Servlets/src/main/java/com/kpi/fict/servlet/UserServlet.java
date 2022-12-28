@@ -6,8 +6,6 @@ import com.kpi.fict.model.User;
 import com.kpi.fict.model.UserController;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +23,7 @@ public class UserServlet extends HttpServlet {
     private static final Logger LOGGER = LogManager.getLogger(ActivityServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
         String role = (String) session.getAttribute("role");
@@ -59,7 +57,7 @@ public class UserServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
 
         String categoryType = req.getParameter("category");
@@ -67,5 +65,9 @@ public class UserServlet extends HttpServlet {
 
         LOGGER.info("Creating new activity of user " + session.getAttribute("login"));
         controller.addActivity(categoryType, duration);
+    }
+
+    public UserController getController() {
+        return controller;
     }
 }
